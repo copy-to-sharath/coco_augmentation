@@ -1,0 +1,9 @@
+numpy
+opencv-python
+albumentations
+pycocotools
+torch
+matplotlib
+torchaudio
+torchvision
+torchtext
