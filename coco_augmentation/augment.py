@@ -139,7 +139,7 @@ class COCOAugmenter:
             
             image, bboxes, masks, annotations,file_name = self.load_image_and_mask(image_dir=image_dir,image_id=image_id)
             cnt =-1
-            json_dict =self.generate_coco_file(running_idx,json_dict, aug_dir_image_path, idx, cnt, annotations, file_name, image, bboxes, masks,False)                
+            json_dict =self.generate_coco_file(image_id,json_dict, aug_dir_image_path, idx, cnt, annotations, file_name, image, bboxes, masks,False)                
             augmented_image,aug_bboxes, augmented_mask = self.augment_image_and_mask(image, bboxes,masks)
 
             json_dict = self.generate_coco_file(running_idx, json_dict,aug_dir_image_path, idx, cnt, annotations, file_name, augmented_image, aug_bboxes, augmented_mask,True)                
