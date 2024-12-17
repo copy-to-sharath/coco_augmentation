@@ -20,10 +20,13 @@ class COCOAugmenter:
         self.coco = COCO(annotation_path)
         self.output_dir = output_dir
         self.transform = A.Compose(
-            transformations, additional_targets={"mask": "mask"}, bbox_params=dict(
-            format='coco',
-            min_visibility=0.0
-            ),
+            transformations, 
+            additional_targets={"mask": "mask"}, 
+            bbox_params=            
+            A.BboxParams(format='coco', 
+                        min_visibility=0.0                        
+                         )
+
         )
         os.makedirs(output_dir, exist_ok=True)
 
@@ -37,6 +40,7 @@ class COCOAugmenter:
         h, w = image.shape[:2]
         file_name =image_info['file_name']
         mask = np.zeros((h, w), dtype=np.uint8)
+
         annotation_ids = self.coco.getAnnIds(imgIds=image_id)
         annotations = self.coco.loadAnns(annotation_ids)
         bboxes = [[item["bbox"][0], item["bbox"][1],item["bbox"][2], item["bbox"][3], item["category_id"]] for item in annotations]
@@ -53,15 +57,12 @@ class COCOAugmenter:
                 color_index+=1
                 if 'segmentation' in ann:
 
-
                     if isinstance(ann['segmentation'], list):  # Polygon
-
                         for seg in ann['segmentation']:
                             poly = np.array(seg, dtype=np.int32).reshape((-1, 2))
                             # Get the color for a specific class (e.g., class 0)
                             # print(color)
-                            cv2.fillPoly(mask, [poly], color=cmap[color_index])
-
+                            cv2.fillPoly(mask, [poly], color=cmap[color_index])                            
                     elif isinstance(ann['segmentation'], dict):  # RLE
                         rle = maskUtils.frPyObjects(ann['segmentation'], h, w)
                         binary_mask = maskUtils.decode(rle)
@@ -73,7 +74,7 @@ class COCOAugmenter:
         """
         Applies augmentations to the image and mask.
         """
-        augmented = self.transform(image=image, mask=masks,bboxes=bboxes)
+        augmented = self.transform(image=image, mask=masks,bboxes=bboxes)        
         return augmented["image"], augmented["bboxes"],augmented["mask"]
 
     def extract_polygons_from_mask(self, mask):
@@ -108,7 +109,7 @@ class COCOAugmenter:
         if augmented_image.shape[0] == 3:
             augmented_image = augmented_image.permute(1, 2, 0)  # Convert to HWC format        
 
-        # Scale the values from [0, 1] to [0, 255] if needed
+        # Scale the values from [0, 1] to [0,ff 255] if needed
         if augmented_image.max() <= 1:
             augmented_image = (augmented_image * 255).astype(np.uint8)
         augmented_image  = augmented_image.numpy()
